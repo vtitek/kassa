@@ -196,7 +196,8 @@
             justify-content: flex-start;
             padding: clamp(8px, 1.5vw, 20px);
         }
-        #topbar {
+        /* Desktop topbar */
+        #topbar-desktop {
             width: 100%;
             max-width: 1200px;
             display: flex;
@@ -206,6 +207,22 @@
             flex-wrap: wrap;
             margin-bottom: 8px;
             flex-shrink: 0;
+        }
+        /* Mobile topbar */
+        #topbar-mobile {
+            width: 100%;
+            max-width: 1200px;
+            display: none; /* показывается только на мобильных */
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 8px;
+            flex-shrink: 0;
+        }
+        .top-row-mobile {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
         }
         .top-info {
             display: flex;
@@ -245,6 +262,7 @@
             padding: 6px 12px;
             border-radius: 10px;
             border: 1px solid rgba(255,255,255,.1);
+            justify-content: center;
         }
         .info-item {
             display: flex;
@@ -270,7 +288,8 @@
             color: var(--gold-light);
         }
         .pause-btn,
-        .sound-btn {
+        .sound-btn,
+        .menu-btn {
             width: 36px;
             height: 36px;
             border-radius: 50%;
@@ -285,8 +304,12 @@
             transition: background .15s ease;
         }
         .pause-btn:hover,
-        .sound-btn:hover {
+        .sound-btn:hover,
+        .menu-btn:hover {
             background: rgba(255, 255, 255, .08);
+        }
+        .menu-btn {
+            display: none; /* показывается только на мобильных */
         }
         .cashier-badge {
             font-family: 'Oswald', sans-serif;
@@ -1214,69 +1237,200 @@
             backdrop-filter: blur(8px);
         }
 
-        /* responsive */
+        /* ===== Off-canvas panel (mobile) ===== */
+        #mobile-panel {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100%;
+            background: rgba(20,20,20,.95);
+            border-left: 1px solid rgba(255,255,255,.1);
+            box-shadow: -5px 0 15px rgba(0,0,0,.5);
+            z-index: 50;
+            transition: right .3s ease;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        #mobile-panel.open {
+            right: 0;
+        }
+        #mobile-panel .close-btn {
+            align-self: flex-end;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Медиа-запросы */
         @media (max-width: 900px) {
+            /* Скрываем desktop topbar и показываем мобильный */
+            #topbar-desktop {
+                display: none;
+            }
+            #topbar-mobile {
+                display: flex;
+            }
+            /* Остальные мобильные адаптации */
             #stage-area {
                 flex-direction: column;
                 align-items: stretch;
+                gap: 8px;
             }
             #tray-col {
-                max-height: 30vh;
+                max-height: none;
+                flex: 0 0 auto;
+                order: 2;
             }
             #inspect-col {
-                min-height: 300px;
+                min-height: 0;
+                flex: 1;
+                order: 1;
             }
             #stats-col {
-                flex-direction: row;
-                flex-wrap: wrap;
-                justify-content: space-around;
+                display: none; /* скрываем, будет в шторке */
             }
-            .stat-item {
-                flex: 1;
-                min-width: 100px;
+            .menu-btn {
+                display: flex;
             }
-            .cashier-grid {
-                grid-template-columns: repeat(4, 1fr);
+            .top-row-mobile {
+                flex-wrap: nowrap;
             }
-            .bill {
-                width: 240px;
-                height: 124px;
+            .top-row-mobile .shop-name {
+                font-size: 18px;
             }
-            .bill-content {
-                padding: 6px 10px 6px 40px;
+            .top-row-mobile .time-display,
+            .top-row-mobile .cash-display {
+                font-size: 14px;
+                padding: 2px 8px;
             }
-            .bill .value {
-                font-size: 28px;
+            .top-row-mobile .stat-cluster {
+                gap: 6px;
             }
-            .bill .seal {
-                width: 34px;
-                height: 34px;
+            .top-row-mobile .pause-btn,
+            .top-row-mobile .sound-btn,
+            .top-row-mobile .menu-btn {
+                width: 32px;
+                height: 32px;
                 font-size: 14px;
             }
-            .wm-window {
+            .customer-info {
+                order: 3;
+                width: 100%;
+                justify-content: space-around;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                padding: 4px 8px;
+            }
+            .customer-info .info-item {
+                font-size: 12px;
+                white-space: nowrap;
+            }
+            #inspect-col {
+                padding: 8px;
+                gap: 4px;
+            }
+            #bill-slot {
+                min-height: 150px;
+            }
+            .inspect-title {
+                display: none;
+            }
+            .tools-row {
+                gap: 4px;
+            }
+            .tool-btn {
+                padding: 4px 10px;
+                font-size: 11px;
+            }
+            .decision-row {
+                gap: 6px;
+                margin-top: 2px;
+            }
+            .decision-btn {
+                padding: .4em .8em;
+                font-size: 12px;
+                gap: 4px;
+            }
+            .nav-row {
+                gap: 6px;
+            }
+            .nav-btn {
                 width: 28px;
+                height: 28px;
+                font-size: 14px;
+            }
+            #cash-register {
+                display: none;
+            }
+            .queue-indicator {
+                display: none;
+            }
+            .selected-group {
+                gap: 5px;
+                padding: 4px 0;
+            }
+            .mini-bill {
+                width: 60px;
+                height: 32px;
+                font-size: 12px;
+            }
+            .mini-coin {
+                width: 30px;
+                height: 30px;
+                font-size: 10px;
+            }
+            .bill {
+                width: 220px;
+                height: 112px;
+            }
+            .bill-content {
+                padding: 4px 8px 4px 36px;
+            }
+            .bill .value {
+                font-size: 24px;
+            }
+            .bill .seal {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+            }
+            .wm-window {
+                width: 24px;
+                left: 4px;
+                top: 4px;
+                bottom: 4px;
             }
             .holo-patch {
-                width: 40px;
-                height: 14px;
+                width: 36px;
+                height: 12px;
+                top: 4px;
+                right: 6px;
             }
             .micro-strip {
-                left: 44px;
-                bottom: 22px;
-                right: 10px;
-                height: 14px;
+                left: 40px;
+                bottom: 18px;
+                right: 8px;
+                height: 12px;
             }
             .micro-strip span {
-                font-size: 7px;
-                letter-spacing: 2px;
+                font-size: 6px;
             }
             .coin-display {
-                width: 100px;
-                height: 100px;
-                font-size: 32px;
+                width: 90px;
+                height: 90px;
+                font-size: 28px;
             }
             .coin-display .coin-denom {
-                font-size: 36px;
+                font-size: 30px;
+            }
+            .coin-display .coin-currency {
+                font-size: 18px;
             }
         }
         @media (max-width: 500px) {
@@ -1284,75 +1438,83 @@
                 grid-template-columns: repeat(3, 1fr);
             }
             .money-item {
-                min-width: 44px;
-                min-height: 34px;
-                font-size: 14px;
-                padding: 4px 8px;
+                min-width: 40px;
+                min-height: 30px;
+                font-size: 13px;
+                padding: 4px 6px;
             }
             .money-item.coin {
-                min-width: 40px;
-                min-height: 40px;
-            }
-            .money-item.bill {
-                min-width: 56px;
+                min-width: 36px;
                 min-height: 36px;
             }
+            .money-item.bill {
+                min-width: 50px;
+                min-height: 32px;
+            }
             .bill {
-                width: 200px;
-                height: 104px;
+                width: 180px;
+                height: 92px;
             }
             .bill-content {
-                padding: 4px 8px 4px 32px;
-            }
-            .wm-window {
-                width: 22px;
-                left: 4px;
-                top: 4px;
-                bottom: 4px;
-            }
-            .wm-window .wm-icon {
-                font-size: 10px;
-            }
-            .holo-patch {
-                width: 32px;
-                height: 11px;
-                top: 5px;
-                right: 6px;
-            }
-            .micro-strip {
-                left: 36px;
-                bottom: 16px;
-                right: 8px;
-                height: 12px;
-            }
-            .micro-strip span {
-                font-size: 5.5px;
-                letter-spacing: 1.5px;
+                padding: 2px 6px 2px 30px;
             }
             .bill .value {
-                font-size: 22px;
+                font-size: 20px;
             }
             .bill .seal {
-                width: 28px;
-                height: 28px;
-                font-size: 11px;
-            }
-            .bill .rub {
-                font-size: 16px;
-            }
-            .bill .serial-mini {
-                font-size: 6px;
-            }
-            .bill .corner-num {
+                width: 22px;
+                height: 22px;
                 font-size: 10px;
             }
+            .bill .rub {
+                font-size: 14px;
+            }
+            .bill .serial-mini,
+            .bill .serial,
+            .bill .currency-word {
+                font-size: 5px;
+            }
+            .wm-window {
+                width: 20px;
+            }
+            .wm-window .wm-icon {
+                font-size: 8px;
+            }
+            .holo-patch {
+                width: 28px;
+                height: 10px;
+            }
+            .micro-strip {
+                left: 32px;
+                bottom: 14px;
+                height: 10px;
+            }
+            .micro-strip span {
+                font-size: 5px;
+            }
             .coin-display {
-                width: 80px;
-                height: 80px;
-                font-size: 26px;
+                width: 70px;
+                height: 70px;
+                font-size: 22px;
             }
             .coin-display .coin-denom {
-                font-size: 28px;
+                font-size: 24px;
+            }
+            .coin-display .coin-currency {
+                font-size: 14px;
+            }
+            .tools-row .tool-btn {
+                font-size: 10px;
+                padding: 3px 6px;
+            }
+            .decision-btn {
+                font-size: 11px;
+                padding: .3em .6em;
+            }
+            .nav-btn {
+                width: 24px;
+                height: 24px;
+                font-size: 12px;
             }
         }
         @media (prefers-reduced-motion: reduce) {
@@ -1384,22 +1546,44 @@
 
         <!-- GAME SCREEN -->
         <div id="screen-game" class="screen hidden">
-            <div id="topbar">
-                <div class="top-info">
-                    <div class="shop-name">Нолик</div>
-                    <div class="time-display" id="time-display">08:00</div>
-                    <div class="cash-display">Касса: <b id="total-money">0 ₽</b></div>
-                </div>
-                <div class="customer-info" id="customer-info">
-                    <div class="info-item"><span class="label">К оплате:</span> <span class="value" id="payment-amount">0 ₽</span></div>
-                    <div class="info-item"><span class="label">Дано:</span> <span class="value" id="given-amount">0 ₽</span></div>
-                    <div class="info-item"><span class="label">Принято:</span> <span class="value" id="accepted-amount">0 ₽</span></div>
-                    <div class="info-item"><span class="label">Сдача:</span> <span class="value" id="change-amount">0 ₽</span></div>
+            <!-- Desktop topbar -->
+            <div id="topbar-desktop">
+                <div class="stat-cluster">
+                    <div class="plate" id="cashier-plate">Касса №1</div>
+                    <div class="cashier-badge" id="day-label-desktop">День 1</div>
                 </div>
                 <div class="stat-cluster">
-                    <div class="cashier-badge" id="day-label">День 1</div>
-                    <button class="pause-btn" id="btn-pause" aria-label="Пауза">⏸</button>
-                    <button class="sound-btn" id="btn-sound" aria-label="Звук">🔊</button>
+                    <div class="score-box">В кассе: <b id="total-money-desktop">0 ₽</b></div>
+                    <button class="pause-btn" id="btn-pause-desktop">⏸</button>
+                    <button class="sound-btn" id="btn-sound-desktop">🔊</button>
+                </div>
+            </div>
+            <!-- Desktop customer info -->
+            <div id="customer-info-desktop">
+                <div class="customer-info">
+                    <div class="info-item"><span class="label">К оплате:</span> <span class="value" id="payment-amount-desktop">0 ₽</span></div>
+                    <div class="info-item"><span class="label">Дано:</span> <span class="value" id="given-amount-desktop">0 ₽</span></div>
+                    <div class="info-item"><span class="label">Принято:</span> <span class="value" id="accepted-amount-desktop">0 ₽</span></div>
+                    <div class="info-item"><span class="label">Сдача:</span> <span class="value" id="change-amount-desktop">0 ₽</span></div>
+                </div>
+            </div>
+            <!-- Mobile topbar -->
+            <div id="topbar-mobile">
+                <div class="top-row-mobile">
+                    <div class="top-info">
+                        <div class="shop-name">Нолик</div>
+                        <div class="time-display" id="time-display-mobile">08:00</div>
+                    </div>
+                    <div class="stat-cluster">
+                        <button class="menu-btn" id="btn-menu" aria-label="Меню">☰</button>
+                        <button class="pause-btn" id="btn-pause-mobile">⏸</button>
+                        <button class="sound-btn" id="btn-sound-mobile">🔊</button>
+                    </div>
+                </div>
+                <div class="customer-info" id="customer-info-mobile">
+                    <div class="info-item"><span class="label">К оплате:</span> <span class="value" id="payment-amount-mobile">0 ₽</span></div>
+                    <div class="info-item"><span class="label">Сдача:</span> <span class="value" id="change-amount-mobile">0 ₽</span></div>
+                    <div class="info-item"><span class="label">Касса:</span> <span class="value" id="total-money-mobile">0 ₽</span></div>
                 </div>
             </div>
 
@@ -1409,8 +1593,8 @@
                     <div class="tray-title">💰 Деньги покупателя</div>
                     <div class="money-grid" id="money-grid"></div>
                     <div class="tray-actions">
-                        <button class="btn-secondary" id="btn-add-all">➕ Добавить все в очередь</button>
-                        <button class="btn-secondary" id="btn-clear-queue">🗑 Очистить очередь</button>
+                        <button class="btn-secondary" id="btn-add-all">➕ Добавить все</button>
+                        <button class="btn-secondary" id="btn-clear-queue">🗑 Очистить</button>
                         <button class="btn-secondary" id="btn-take-all">💼 Забрать без проверки</button>
                     </div>
                 </div>
@@ -1428,14 +1612,14 @@
                         <button class="nav-btn" id="btn-next">▶</button>
                     </div>
                     <div class="tools-row">
-                        <button class="tool-btn" data-tool="uv"><span class="bulb"></span> UV-лампа</button>
+                        <button class="tool-btn" data-tool="uv"><span class="bulb"></span> UV</button>
                         <button class="tool-btn" data-tool="loupe"><span class="bulb"></span> Лупа</button>
                     </div>
                     <div class="decision-row">
                         <button class="decision-btn reject" id="btn-reject">✕ Фальшивка</button>
                         <button class="decision-btn accept" id="btn-accept">✓ Подлинная</button>
-                        <button class="decision-btn take-all-genuine" id="btn-take-all-genuine">💎 Взять все подлинные</button>
-                        <button class="decision-btn accept" id="btn-finish-customer" disabled>✅ Завершить обслуживание</button>
+                        <button class="decision-btn take-all-genuine" id="btn-take-all-genuine">💎 Все подлинные</button>
+                        <button class="decision-btn accept" id="btn-finish-customer" disabled>✅ Завершить</button>
                     </div>
                     <div id="cash-register">
                         <div class="register-label">Кассовый аппарат</div>
@@ -1447,7 +1631,7 @@
                     </div>
                 </div>
 
-                <!-- STATS & PHONE -->
+                <!-- STATS & PHONE (desktop only) -->
                 <div id="stats-col">
                     <div class="stat-item"><span class="label">Осталось</span><span class="value" id="stat-pending">0</span></div>
                     <div class="stat-item"><span class="label">В кассе</span><span class="value green" id="stat-cash">0 ₽</span></div>
@@ -1473,9 +1657,28 @@
                 </div>
             </div>
 
-            <div id="toast"></div>
             <div id="modal-overlay" class="hidden">
                 <div class="modal-card" id="modal-content"></div>
+            </div>
+        </div>
+
+        <!-- Глобальный тост -->
+        <div id="toast"></div>
+        <!-- Мобильная шторка -->
+        <div id="mobile-panel">
+            <button class="close-btn" id="btn-close-panel">×</button>
+            <div class="stat-item"><span class="label">Осталось</span><span class="value" id="stat-pending-mobile">0</span></div>
+            <div class="stat-item"><span class="label">В кассе</span><span class="value green" id="stat-cash-mobile">0 ₽</span></div>
+            <div class="stat-item"><span class="label">Фальшивок найдено</span><span class="value red" id="stat-fake-mobile">0</span></div>
+            <div class="stat-item"><span class="label">Точность</span><span class="value" id="stat-accuracy-mobile">100%</span></div>
+            <div class="stat-item"><span class="label">Всего проверено</span><span class="value" id="stat-total-mobile">0</span></div>
+            <div class="stat-item"><span class="label">Обслужено</span><span class="value green" id="stat-served-mobile">0</span></div>
+            <div class="stat-item"><span class="label">Ошибок</span><span class="value red" id="stat-failed-mobile">0</span></div>
+            <div class="phone-section">
+                <button class="phone-btn" id="btn-call-sb-mobile">📞 731 - СБ</button>
+                <button class="phone-btn" id="btn-call-sc-mobile">📞 761 - СК</button>
+                <button class="phone-btn" id="btn-call-rks-mobile">📞 760 - РКС</button>
+                <button class="phone-btn" id="btn-call-gk-mobile">📞 768 - ГК</button>
             </div>
         </div>
 
@@ -1494,21 +1697,46 @@
                     YaGames.init().then(sdk => {
                         ysdk = sdk;
                         resolve();
-                    }).catch(() => resolve());
+                        checkExistingAuth();
+                    }).catch(() => {
+                        resolve();
+                        document.getElementById('btn-auth').disabled = false;
+                    });
                 } else {
+                    document.getElementById('btn-auth').disabled = false;
                     resolve();
                 }
             });
 
+            async function checkExistingAuth() {
+                try {
+                    if (ysdk && ysdk.auth && ysdk.auth.getUser) {
+                        const user = await ysdk.auth.getUser();
+                        if (user) {
+                            isAuthorized = true;
+                            document.getElementById('btn-auth').disabled = true;
+                            document.getElementById('btn-auth').textContent = '✅ Авторизован';
+                        } else {
+                            document.getElementById('btn-auth').disabled = false;
+                        }
+                    }
+                } catch (_) {
+                    document.getElementById('btn-auth').disabled = false;
+                }
+            }
+
             /* ===== AUDIO ===== */
             let actx = null;
             let soundEnabled = true;
-            document.getElementById('btn-sound').addEventListener('click', () => {
+            function toggleSound() {
                 soundEnabled = !soundEnabled;
-                document.getElementById('btn-sound').textContent = soundEnabled ? '🔊' : '🔇';
-                if (!soundEnabled && actx) actx && actx.suspend();
-                else if (soundEnabled && actx) actx && actx.resume();
-            });
+                const btns = [document.getElementById('btn-sound-desktop'), document.getElementById('btn-sound-mobile')];
+                btns.forEach(btn => btn.textContent = soundEnabled ? '🔊' : '🔇');
+                if (!soundEnabled && actx) actx.suspend();
+                else if (soundEnabled && actx) actx.resume();
+            }
+            document.getElementById('btn-sound-desktop').addEventListener('click', toggleSound);
+            document.getElementById('btn-sound-mobile').addEventListener('click', toggleSound);
 
             function ac() { if (!actx) { actx = new(window.AudioContext || window.webkitAudioContext)(); } return actx; }
 
@@ -1610,9 +1838,9 @@
             const S = {
                 cashier: null,
                 day: 1,
-                timeMinutes: 0, // 0 = 08:00
+                timeMinutes: 0,
                 cashDenoms: { ...START_CASH_COMPOSITION },
-                currentCustomer: null, // { paymentAmount, givenMoney, acceptedItems, rejectedFakes, processedCount, totalGivenSum, securityCalled }
+                currentCustomer: null,
                 selectedQueue: [],
                 selectedIndex: 0,
                 totalDecisions: 0,
@@ -1630,11 +1858,13 @@
 
             /* ===== DOM REFS ===== */
             const $ = id => document.getElementById(id);
+            // Стартовый экран
             const elCashierGrid = $('cashier-grid');
             const elStartGame = $('btn-start-game');
             const elAuthBtn = $('btn-auth');
             const elGameScreen = $('screen-game');
             const elStartScreen = $('screen-start');
+            // Игровые элементы (общие)
             const elMoneyGrid = $('money-grid');
             const elBillSlot = $('bill-slot');
             const elQueueIndicator = $('queue-indicator');
@@ -1649,9 +1879,17 @@
             const elBtnAccept = $('btn-accept');
             const elBtnFinishCustomer = $('btn-finish-customer');
             const elToolBtns = document.querySelectorAll('.tool-btn');
+            // Касса и статистика
             const elRegisterDisplay = $('register-display');
             const elRegisterDrawer = $('register-drawer');
             const elCoinDrop = $('coin-drop');
+            // Desktop элементы
+            const elDayLabelDesktop = $('day-label-desktop');
+            const elTotalMoneyDesktop = $('total-money-desktop');
+            const elPaymentDesktop = $('payment-amount-desktop');
+            const elGivenDesktop = $('given-amount-desktop');
+            const elAcceptedDesktop = $('accepted-amount-desktop');
+            const elChangeDesktop = $('change-amount-desktop');
             const elStatPending = $('stat-pending');
             const elStatCash = $('stat-cash');
             const elStatFake = $('stat-fake');
@@ -1659,25 +1897,41 @@
             const elStatTotal = $('stat-total');
             const elStatServed = $('stat-served');
             const elStatFailed = $('stat-failed');
-            const elTotalMoney = $('total-money');
-            const elCashierPlate = $('cashier-plate');
-            const elDayLabel = $('day-label');
-            const elTimeDisplay = $('time-display');
-            const elPaymentAmount = $('payment-amount');
-            const elGivenAmount = $('given-amount');
-            const elAcceptedAmount = $('accepted-amount');
-            const elChangeAmount = $('change-amount');
-            const elToast = $('toast');
-            const elPauseOverlay = $('pause-overlay');
-            const elBtnPause = $('btn-pause');
-            const elBtnResume = $('btn-resume');
-            const elBtnRestart = $('btn-pause-restart');
-            const elModalOverlay = $('modal-overlay');
-            const elModalContent = $('modal-content');
             const elBtnCallSB = $('btn-call-sb');
             const elBtnCallSC = $('btn-call-sc');
             const elBtnCallRKS = $('btn-call-rks');
             const elBtnCallGK = $('btn-call-gk');
+            // Mobile элементы
+            const elTimeMobile = $('time-display-mobile');
+            const elTotalMoneyMobile = $('total-money-mobile');
+            const elPaymentMobile = $('payment-amount-mobile');
+            const elChangeMobile = $('change-amount-mobile');
+            const elBtnMenu = $('btn-menu');
+            const elBtnPauseDesktop = $('btn-pause-desktop');
+            const elBtnPauseMobile = $('btn-pause-mobile');
+            const elBtnSoundDesktop = $('btn-sound-desktop');
+            const elBtnSoundMobile = $('btn-sound-mobile');
+            const elMobilePanel = $('mobile-panel');
+            const elBtnClosePanel = $('btn-close-panel');
+            const mobStats = {
+                pending: $('stat-pending-mobile'),
+                cash: $('stat-cash-mobile'),
+                fake: $('stat-fake-mobile'),
+                accuracy: $('stat-accuracy-mobile'),
+                total: $('stat-total-mobile'),
+                served: $('stat-served-mobile'),
+                failed: $('stat-failed-mobile')
+            };
+            const mobCallSB = $('btn-call-sb-mobile');
+            const mobCallSC = $('btn-call-sc-mobile');
+            const mobCallRKS = $('btn-call-rks-mobile');
+            const mobCallGK = $('btn-call-gk-mobile');
+            const elBtnResume = $('btn-resume');
+            const elBtnRestart = $('btn-pause-restart');
+            const elPauseOverlay = $('pause-overlay');
+            const elModalOverlay = $('modal-overlay');
+            const elModalContent = $('modal-content');
+            const elToast = $('toast');
 
             let selectedCashier = null;
             let currentTool = null;
@@ -1724,12 +1978,12 @@
                 S.tool = null;
                 S.securityCalled = false;
 
-                elDayLabel.textContent = 'День ' + S.day;
+                document.querySelectorAll('.day-label').forEach(el => el.textContent = 'День ' + S.day);
                 elPauseOverlay.classList.add('hidden');
                 setTool(null);
 
                 showScreen('screen-game');
-                createCustomer(); // покупатель приходит сразу
+                createCustomer();
                 updateTimeDisplay();
                 updateCashDisplay();
                 updateCustomerInfo();
@@ -1753,8 +2007,8 @@
             /* ===== GAME TICK ===== */
             function gameTick() {
                 if (S.paused || !S.active) return;
-                S.timeMinutes += 1; // 1 real sec = 1 game minute
-                if (S.timeMinutes >= 900) { // 23:00
+                S.timeMinutes += 1;
+                if (S.timeMinutes >= 900) {
                     endOfDay();
                     return;
                 }
@@ -1762,7 +2016,7 @@
                 if (S.timeMinutes >= S.nextCustomerAt && !S.currentCustomer) {
                     createCustomer();
                 }
-                if (S.timeMinutes === 540) { // 17:00
+                if (S.timeMinutes === 540) {
                     toast('🔔 ПОЗВОНИТЕ В ГЛАВНУЮ КАССУ (768 - ГК)', 'neutral');
                 }
                 saveProgress();
@@ -1771,7 +2025,9 @@
             function updateTimeDisplay() {
                 const hours = Math.floor(S.timeMinutes / 60) + 8;
                 const mins = S.timeMinutes % 60;
-                elTimeDisplay.textContent = String(hours).padStart(2, '0') + ':' + String(mins).padStart(2, '0');
+                const timeStr = String(hours).padStart(2, '0') + ':' + String(mins).padStart(2, '0');
+                if (elTimeMobile) elTimeMobile.textContent = timeStr;
+                // Desktop не показывает время (но можно добавить позже)
             }
 
             /* ===== CUSTOMER GENERATION ===== */
@@ -1789,7 +2045,7 @@
                 };
                 S.selectedQueue = [];
                 S.selectedIndex = 0;
-                S.nextCustomerAt = S.timeMinutes + randInt(80, 140); // следующий через 80-140 минут
+                S.nextCustomerAt = S.timeMinutes + randInt(80, 140);
                 renderTray();
                 renderSelectedGroup();
                 updateCustomerInfo();
@@ -1923,7 +2179,6 @@
                 });
 
                 applyToolEffectToActive();
-                // Запускаем hover-эффект для активной купюры
                 const bill = document.getElementById('current-bill');
                 if (bill) {
                     bill.addEventListener('pointerenter', () => bill.classList.add('hovered'));
@@ -2049,7 +2304,7 @@
                         S.currentCustomer.rejectedFakes++;
                         S.currentCustomer.securityCalled = true;
                         sfxFake();
-                        toast('✅ Фальшивка обнаружена! Нажмите 731 - СБ для вызова', 'good');
+                        toast('✅ Фальшивка обнаружена! Нажмите 731 - СБ', 'good');
                     } else {
                         S.currentCustomer.acceptedItems.push(item);
                         sfxReal();
@@ -2074,7 +2329,7 @@
                 updatePhoneButtons();
                 if (S.currentCustomer.processedCount === S.currentCustomer.givenMoney.length) {
                     elBtnFinishCustomer.disabled = false;
-                    toast('Все деньги обработаны. Нажмите "Завершить обслуживание"', 'neutral');
+                    toast('Все деньги обработаны. Нажмите "Завершить"', 'neutral');
                 }
                 saveProgress();
             }
@@ -2165,12 +2420,12 @@
                 updatePhoneButtons();
                 if (S.currentCustomer.processedCount === S.currentCustomer.givenMoney.length) {
                     elBtnFinishCustomer.disabled = false;
-                    toast('Все деньги обработаны. Нажмите "Завершить обслуживание"', 'neutral');
+                    toast('Все деньги обработаны. Нажмите "Завершить"', 'neutral');
                 }
                 saveProgress();
             }
 
-            /* ===== TAKE ALL GENUINE (auto perfect) ===== */
+            /* ===== TAKE ALL GENUINE ===== */
             function takeAllGenuine() {
                 if (S.processing || !S.active || !S.currentCustomer) return;
                 S.processing = true;
@@ -2204,7 +2459,7 @@
                 updatePhoneButtons();
                 if (S.currentCustomer.processedCount === S.currentCustomer.givenMoney.length) {
                     elBtnFinishCustomer.disabled = false;
-                    toast('Все деньги обработаны. Нажмите "Завершить обслуживание"', 'neutral');
+                    toast('Все деньги обработаны. Нажмите "Завершить"', 'neutral');
                 }
                 saveProgress();
             }
@@ -2225,9 +2480,7 @@
                         amount -= take * d;
                     }
                 }
-                if (amount !== 0) {
-                    return false; // не удалось
-                }
+                if (amount !== 0) return false;
                 for (const d in change) {
                     S.cashDenoms[d] -= change[d];
                 }
@@ -2240,7 +2493,6 @@
                     toast('СБ не требуется', 'neutral');
                     return;
                 }
-                // Добавляем новую купюру от покупателя (замена фальшивой)
                 const replacementDenom = randInt(50, 1000);
                 const newItem = {
                     id: S.currentCustomer.givenMoney.length,
@@ -2267,12 +2519,8 @@
 
             function callSC() {
                 const name = randChoice(SC_NAMES);
-                if (Math.random() < 0.5) {
-                    toast(`${name}: "Сейчас подойду"`, 'neutral');
-                } else {
-                    toast(`${name}: "Позвони 760"`, 'neutral');
-                    // активируем РКС (уже активна)
-                }
+                if (Math.random() < 0.5) toast(`${name}: "Сейчас подойду"`, 'neutral');
+                else toast(`${name}: "Позвони 760"`, 'neutral');
                 sfxClick();
             }
 
@@ -2286,7 +2534,6 @@
                     toast('Главная касса: "Инкассация в 17:00"', 'neutral');
                     return;
                 }
-                // показать окно выбора
                 showModal('Выберите сотрудника главной кассы', GK_NAMES, (selected) => {
                     toast(`Вызов ${selected}...`, 'neutral');
                     performCollection();
@@ -2295,27 +2542,16 @@
             }
 
             function performCollection() {
-                // вычисляем изъятые купюры
                 const removed = {};
-                if (S.cashDenoms[5000]) {
-                    removed[5000] = S.cashDenoms[5000];
-                    S.cashDenoms[5000] = 0;
-                }
-                if (S.cashDenoms[2000]) {
-                    removed[2000] = S.cashDenoms[2000];
-                    S.cashDenoms[2000] = 0;
-                }
+                if (S.cashDenoms[5000]) { removed[5000] = S.cashDenoms[5000]; S.cashDenoms[5000] = 0; }
+                if (S.cashDenoms[2000]) { removed[2000] = S.cashDenoms[2000]; S.cashDenoms[2000] = 0; }
                 if (S.cashDenoms[1000]) {
                     const keep = Math.min(3, S.cashDenoms[1000]);
                     const take = S.cashDenoms[1000] - keep;
-                    if (take > 0) {
-                        removed[1000] = take;
-                        S.cashDenoms[1000] = keep;
-                    }
+                    if (take > 0) { removed[1000] = take; S.cashDenoms[1000] = keep; }
                 }
                 const totalRemoved = Object.entries(removed).reduce((sum, [denom, count]) => sum + denom * count, 0);
                 updateCashDisplay();
-                // показать модальное окно с чеком
                 const listHtml = Object.entries(removed).map(([denom, count]) => `<div class="modal-list-item"><span>${denom} ₽</span><span>${count} шт.</span></div>`).join('');
                 const modalHtml = `
                     <div class="modal-title">Инкассация</div>
@@ -2362,9 +2598,8 @@
                 S.active = false;
                 clearInterval(timerInterval);
                 const totalCash = getCashTotal();
-                let removedAll = totalCash - 5000; // изъять всё, оставив 5000
+                let removedAll = totalCash - 5000;
                 if (removedAll < 0) removedAll = 0;
-                // показываем итоги
                 const accuracy = S.totalDecisions === 0 ? 100 : Math.round(100 * S.correctDecisions / S.totalDecisions);
                 const modalHtml = `
                     <div class="modal-title">День ${S.day} завершён!</div>
@@ -2398,7 +2633,7 @@
                     updateStats();
                     if (timerInterval) clearInterval(timerInterval);
                     timerInterval = setInterval(gameTick, 1000);
-                    createCustomer(); // покупатель приходит сразу в новом дне
+                    createCustomer();
                     saveProgress();
                 });
                 saveProgress();
@@ -2411,45 +2646,63 @@
             /* ===== STATS & DISPLAY ===== */
             function updateStats() {
                 const pending = S.currentCustomer ? S.currentCustomer.givenMoney.filter(m => !m.processed).length : 0;
-                elStatPending.textContent = pending;
-                elStatCash.textContent = getCashTotal() + ' ₽';
-                elStatFake.textContent = S.fakeFound;
+                const cash = getCashTotal();
                 const acc = S.totalDecisions === 0 ? 100 : Math.round(100 * S.correctDecisions / S.totalDecisions);
+                // Desktop
+                elStatPending.textContent = pending;
+                elStatCash.textContent = cash + ' ₽';
+                elStatFake.textContent = S.fakeFound;
                 elStatAccuracy.textContent = acc + '%';
                 elStatTotal.textContent = S.totalDecisions;
                 elStatServed.textContent = S.customersServed;
                 elStatFailed.textContent = S.customersFailed;
-                elTotalMoney.textContent = getCashTotal() + ' ₽';
-                elRegisterDisplay.textContent = getCashTotal() + ' ₽';
+                // Mobile
+                mobStats.pending.textContent = pending;
+                mobStats.cash.textContent = cash + ' ₽';
+                mobStats.fake.textContent = S.fakeFound;
+                mobStats.accuracy.textContent = acc + '%';
+                mobStats.total.textContent = S.totalDecisions;
+                mobStats.served.textContent = S.customersServed;
+                mobStats.failed.textContent = S.customersFailed;
+                updateCashDisplay();
             }
 
             function updateCashDisplay() {
                 const total = getCashTotal();
-                elTotalMoney.textContent = total + ' ₽';
+                elTotalMoneyDesktop.textContent = total + ' ₽';
+                elTotalMoneyMobile.textContent = total + ' ₽';
                 elRegisterDisplay.textContent = total + ' ₽';
                 elStatCash.textContent = total + ' ₽';
+                mobStats.cash.textContent = total + ' ₽';
             }
 
             function updateCustomerInfo() {
                 if (!S.currentCustomer) {
-                    elPaymentAmount.textContent = '0 ₽';
-                    elGivenAmount.textContent = '0 ₽';
-                    elAcceptedAmount.textContent = '0 ₽';
-                    elChangeAmount.textContent = '0 ₽';
+                    elPaymentDesktop.textContent = '0 ₽';
+                    elGivenDesktop.textContent = '0 ₽';
+                    elAcceptedDesktop.textContent = '0 ₽';
+                    elChangeDesktop.textContent = '0 ₽';
+                    elPaymentMobile.textContent = '0 ₽';
+                    elChangeMobile.textContent = '0 ₽';
                     return;
                 }
                 const givenSum = S.currentCustomer.totalGivenSum;
                 const acceptedSum = S.currentCustomer.acceptedItems.reduce((sum, item) => sum + item.denom, 0);
                 const change = Math.max(0, acceptedSum - S.currentCustomer.paymentAmount);
-                elPaymentAmount.textContent = S.currentCustomer.paymentAmount + ' ₽';
-                elGivenAmount.textContent = givenSum + ' ₽';
-                elAcceptedAmount.textContent = acceptedSum + ' ₽';
-                elChangeAmount.textContent = change + ' ₽';
+                // Desktop
+                elPaymentDesktop.textContent = S.currentCustomer.paymentAmount + ' ₽';
+                elGivenDesktop.textContent = givenSum + ' ₽';
+                elAcceptedDesktop.textContent = acceptedSum + ' ₽';
+                elChangeDesktop.textContent = change + ' ₽';
+                // Mobile
+                elPaymentMobile.textContent = S.currentCustomer.paymentAmount + ' ₽';
+                elChangeMobile.textContent = change + ' ₽';
             }
 
             function updatePhoneButtons() {
                 const sbRequired = S.currentCustomer && S.currentCustomer.securityCalled;
                 elBtnCallSB.disabled = !sbRequired;
+                mobCallSB.disabled = !sbRequired;
             }
 
             /* ===== TOAST ===== */
@@ -2555,17 +2808,24 @@
             /* ===== EVENTS ===== */
             elStartGame.addEventListener('click', startGame);
             elAuthBtn.addEventListener('click', async () => {
-                if (!ysdk) return;
+                if (!ysdk) {
+                    toast('❌ Яндекс SDK не загружен. Работайте гостем.', 'bad');
+                    return;
+                }
                 try {
                     await ysdk.auth.login();
                     isAuthorized = true;
-                    alert('Вы успешно авторизовались!');
+                    elAuthBtn.disabled = true;
+                    elAuthBtn.textContent = '✅ Авторизован';
+                    toast('✅ Авторизация успешна!', 'good');
+                    saveProgress();
                 } catch (e) {
-                    alert('Не удалось войти, но вы можете играть в гостевом режиме.');
+                    toast('❌ Не удалось войти. Можно играть гостем.', 'bad');
                 }
             });
 
-            elBtnPause.addEventListener('click', togglePause);
+            // Пауза (обе кнопки)
+            [elBtnPauseDesktop, elBtnPauseMobile].forEach(btn => btn.addEventListener('click', togglePause));
             elBtnResume.addEventListener('click', closePause);
             elBtnRestart.addEventListener('click', () => {
                 sfxClick();
@@ -2586,7 +2846,7 @@
                 S.paused = false;
                 S.active = true;
                 S.securityCalled = false;
-                elDayLabel.textContent = 'День 1';
+                document.querySelectorAll('.day-label').forEach(el => el.textContent = 'День 1');
                 updateTimeDisplay();
                 updateCashDisplay();
                 updateCustomerInfo();
@@ -2596,7 +2856,7 @@
                 updatePhoneButtons();
                 if (timerInterval) clearInterval(timerInterval);
                 timerInterval = setInterval(gameTick, 1000);
-                createCustomer(); // покупатель приходит сразу после перезапуска
+                createCustomer();
                 toast('Игра перезапущена', 'neutral');
                 saveProgress();
             });
@@ -2611,10 +2871,11 @@
             elBtnAccept.addEventListener('click', () => decide('accept'));
             elBtnFinishCustomer.addEventListener('click', finishCustomer);
 
-            elBtnCallSB.addEventListener('click', callSB);
-            elBtnCallSC.addEventListener('click', callSC);
-            elBtnCallRKS.addEventListener('click', callRKS);
-            elBtnCallGK.addEventListener('click', callGK);
+            // Телефонные кнопки
+            [elBtnCallSB, mobCallSB].forEach(btn => btn.addEventListener('click', callSB));
+            [elBtnCallSC, mobCallSC].forEach(btn => btn.addEventListener('click', callSC));
+            [elBtnCallRKS, mobCallRKS].forEach(btn => btn.addEventListener('click', callRKS));
+            [elBtnCallGK, mobCallGK].forEach(btn => btn.addEventListener('click', callGK));
 
             elToolBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -2623,7 +2884,15 @@
                 });
             });
 
-            // 3D tilt на купюре при наведении мыши
+            // Мобильное меню
+            elBtnMenu.addEventListener('click', () => {
+                elMobilePanel.classList.toggle('open');
+            });
+            elBtnClosePanel.addEventListener('click', () => {
+                elMobilePanel.classList.remove('open');
+            });
+
+            // 3D tilt
             elBillSlot.addEventListener('pointermove', (e) => {
                 const bill = document.getElementById('current-bill');
                 if (!bill) return;
@@ -2680,6 +2949,7 @@
                     }
                 });
                 S.active = true;
+                document.querySelectorAll('.day-label').forEach(el => el.textContent = 'День ' + S.day);
                 updateTimeDisplay();
                 updateCashDisplay();
                 updateCustomerInfo();
@@ -2689,7 +2959,7 @@
                 updatePhoneButtons();
                 if (timerInterval) clearInterval(timerInterval);
                 timerInterval = setInterval(gameTick, 1000);
-                if (!S.currentCustomer) createCustomer(); // если покупателя не было, создаём сразу
+                if (!S.currentCustomer) createCustomer();
             }
 
             sdkReady.then(() => {
@@ -2704,7 +2974,6 @@
             if (!hasProgress) {
                 S.cashDenoms = { ...START_CASH_COMPOSITION };
                 updateCashDisplay();
-                // Не создаём покупателя, он появится после нажатия "Начать смену"
             }
 
         })();
